@@ -202,3 +202,89 @@ textarea[data-goal-field] {
   height: auto !important;
   vertical-align: top;
 }
+
+/* =========================
+   ГОТОВЫЕ ВАРИАНТЫ ЦЕЛЕЙ
+========================= */
+
+.goals-priority-picker {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #000000;
+  background: #ffffff;
+}
+
+.goals-priority-select {
+  flex: 1;
+  min-width: 0;
+  min-height: 38px;
+
+  border: 1px solid #b7b7b7;
+  border-radius: 6px;
+
+  background: #ffffff;
+  color: #000000;
+
+  outline: none;
+
+  padding: 7px 34px 7px 10px;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+
+  cursor: pointer;
+}
+
+.goals-priority-select:focus {
+  border-color: #ffc000;
+  box-shadow: 0 0 0 2px rgba(255, 192, 0, 0.2);
+}
+
+.goals-priority-clear {
+  flex: 0 0 auto;
+  min-height: 38px;
+
+  border: 1px solid #b7b7b7;
+  border-radius: 6px;
+
+  background: #f3f4f6;
+  color: #111827;
+
+  padding: 7px 14px;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.goals-priority-clear:hover {
+  background: #e5e7eb;
+}
+
+.goals-priority-clear:active {
+  transform: translateY(1px);
+}
+
+.goals-priority-input {
+  display: block;
+}
+
+@media (max-width: 700px) {
+  .goals-priority-picker {
+    flex-direction: column;
+  }
+
+  .goals-priority-clear {
+    width: 100%;
+  }
+}
+
+@media print {
+  .goals-priority-picker {
+    display: none !important;
+  }
+}

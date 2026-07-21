@@ -330,6 +330,7 @@
         ".hourly-plan-sync",
         ".hourly-loading",
         ".checklist-loading",
+        ".goals-priority-picker",
         ".loading",
       ].join(", ")
     ).forEach((element) => element.remove());

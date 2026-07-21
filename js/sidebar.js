@@ -59,6 +59,19 @@ const views = {
     }
   },
 
+  "area-checklists": {
+    title: "Чек-листы участков",
+    subtitle: "Готовые чек-листы менеджеров обслуживания и производства",
+    component: "../components/area-checklists-view.html",
+    init: () => {
+      if (
+        typeof window.initAreaChecklistsPage === "function"
+      ) {
+        window.initAreaChecklistsPage();
+      }
+    }
+  },
+
   ecosima: {
     title: "Экосима",
     subtitle: "Хранение фото, PDF и файлов по ресторану",

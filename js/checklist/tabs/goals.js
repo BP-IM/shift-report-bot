@@ -76,6 +76,220 @@
     return goalsTemplate;
   }
 
+  function getPriorityOptions(template = goalsTemplate) {
+  const options = template?.priorityOptions;
+
+  if (!Array.isArray(options)) {
+    return [];
+  }
+
+  return options
+    .map((option) => {
+      if (typeof option === "string") {
+        return {
+          title: option.split("\n")[0] || option,
+          text: option,
+        };
+      }
+
+      return {
+        title: option?.title || option?.text || "",
+        text: option?.text || option?.title || "",
+      };
+    })
+    .filter((option) => option.text);
+}
+
+function getPriorityTextarea(priorityNumber) {
+  return document.getElementById(
+    `goalPriority${priorityNumber}`
+  );
+}
+
+function getPrioritySelect(priorityNumber) {
+  return document.getElementById(
+    `goalPrioritySelect${priorityNumber}`
+  );
+}
+
+function setPriorityTextareaValue(
+  priorityNumber,
+  value,
+  options = {}
+) {
+  const textarea = getPriorityTextarea(priorityNumber);
+
+  if (!textarea) {
+    return;
+  }
+
+  textarea.value = value || "";
+
+  if (typeof resizeGoalsTextarea === "function") {
+    resizeGoalsTextarea(textarea);
+  }
+
+  if (options.dispatchInput) {
+    textarea.dispatchEvent(
+      new Event("input", {
+        bubbles: true,
+      })
+    );
+  }
+}
+
+function renderPriorityOptions(template, savedData = {}) {
+  const options = getPriorityOptions(template);
+
+  [1, 2, 3].forEach((priorityNumber) => {
+    const select = getPrioritySelect(priorityNumber);
+
+    if (!select) {
+      return;
+    }
+
+    select.innerHTML = `
+      <option value="">
+        Выберите готовую цель
+      </option>
+
+      ${options
+        .map((option, index) => {
+          return `
+            <option value="${index}">
+              ${escapeHtml(option.title)}
+            </option>
+          `;
+        })
+        .join("")}
+    `;
+
+    const savedValue =
+      savedData?.priorities?.[
+        `priority${priorityNumber}`
+      ] || "";
+
+    const matchedIndex = options.findIndex((option) => {
+      return option.text.trim() === savedValue.trim();
+    });
+
+    select.value =
+      matchedIndex >= 0
+        ? String(matchedIndex)
+        : "";
+  });
+}
+
+function bindPriorityEvents(template) {
+  const priorities = document.querySelector(
+    ".goals-priorities"
+  );
+
+  if (
+    !priorities ||
+    priorities.dataset.priorityEventsBound === "true"
+  ) {
+    return;
+  }
+
+  priorities.dataset.priorityEventsBound = "true";
+
+  const options = getPriorityOptions(template);
+
+  priorities.addEventListener("change", (event) => {
+    const select = event.target.closest(
+      "[data-priority-select]"
+    );
+
+    if (!select) {
+      return;
+    }
+
+    if (select.value === "") {
+      return;
+    }
+
+    const priorityNumber = Number(
+      select.dataset.prioritySelect
+    );
+
+    const selectedIndex = Number(select.value);
+    const selectedOption = options[selectedIndex];
+
+    if (
+      !Number.isInteger(selectedIndex) ||
+      !selectedOption
+    ) {
+      return;
+    }
+
+    setPriorityTextareaValue(
+      priorityNumber,
+      selectedOption.text,
+      {
+        dispatchInput: true,
+      }
+    );
+  });
+
+  priorities.addEventListener("click", (event) => {
+    const clearButton = event.target.closest(
+      "[data-priority-clear]"
+    );
+
+    if (!clearButton) {
+      return;
+    }
+
+    const priorityNumber = Number(
+      clearButton.dataset.priorityClear
+    );
+
+    const select = getPrioritySelect(priorityNumber);
+
+    if (select) {
+      select.value = "";
+    }
+
+    setPriorityTextareaValue(priorityNumber, "", {
+      dispatchInput: true,
+    });
+  });
+
+  priorities.addEventListener("input", (event) => {
+    const textarea = event.target.closest(
+      ".goals-priority-input"
+    );
+
+    if (!textarea) {
+      return;
+    }
+
+    const priorityNumber = Number(
+      String(textarea.id || "").replace(
+        "goalPriority",
+        ""
+      )
+    );
+
+    const select = getPrioritySelect(priorityNumber);
+
+    if (!select || select.value === "") {
+      return;
+    }
+
+    const selectedIndex = Number(select.value);
+    const selectedOption = options[selectedIndex];
+
+    if (
+      !selectedOption ||
+      textarea.value !== selectedOption.text
+    ) {
+      select.value = "";
+    }
+  });
+}
+
   function normalizeMetricText(value) {
     return String(value || "")
       .toLowerCase()
@@ -289,15 +503,20 @@
       })
       .join("");
 
-    document.getElementById("goalPriority1").value =
-      savedData.priorities?.priority1 || "";
-    document.getElementById("goalPriority2").value =
-      savedData.priorities?.priority2 || "";
-    document.getElementById("goalPriority3").value =
-      savedData.priorities?.priority3 || "";
+     document.getElementById("goalPriority1").value =
+        savedData.priorities?.priority1 || "";
 
-    bindGoalsEvents();
-    updateGoalsPercentCache();
+     document.getElementById("goalPriority2").value =
+        savedData.priorities?.priority2 || "";
+
+     document.getElementById("goalPriority3").value =
+        savedData.priorities?.priority3 || "";
+
+     renderPriorityOptions(template, savedData);
+     bindPriorityEvents(template);
+     bindGoalsEvents();
+     initGoalsTextareaAutoResize();
+     updateGoalsPercentCache();
 
     const progressText = document.getElementById("checklistProgressText");
     if (progressText) progressText.textContent = "Цели";
