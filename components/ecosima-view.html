@@ -10,6 +10,260 @@
     </button>
   </div>
 
+  <div class="ecosima-mode-switch" role="tablist" aria-label="Режим Экосима">
+    <button
+      class="ecosima-mode-btn active"
+      type="button"
+      id="ecosimaFilesModeBtn"
+      role="tab"
+      aria-selected="true"
+    >
+      Файлы
+    </button>
+
+    <button
+      class="ecosima-mode-btn ecosima-ai-mode-btn"
+      type="button"
+      id="ecosimaAiModeBtn"
+      role="tab"
+      aria-selected="false"
+    >
+      ✨ AI-дизайнер
+    </button>
+  </div>
+
+  <section class="ecosima-ai-panel" id="ecosimaAiPanel" hidden>
+    <div class="ecosima-ai-head">
+      <div>
+        <span class="ecosima-ai-badge">Gemini Image</span>
+        <h3>Создать Экосима с помощью AI</h3>
+        <p>
+          Добавьте шаблон и фотографии, затем опишите, какую итоговую картинку нужно сделать.
+        </p>
+      </div>
+
+      <button
+        class="ecosima-ai-new-btn"
+        type="button"
+        id="ecosimaAiNewChatBtn"
+      >
+        Новый диалог
+      </button>
+    </div>
+
+    <div class="ecosima-ai-workspace">
+      <div class="ecosima-ai-chat-column">
+
+        <div
+          class="ecosima-ai-messages"
+          id="ecosimaAiMessages"
+          aria-live="polite"
+        >
+          <div class="ecosima-ai-message assistant">
+            <div class="ecosima-ai-avatar">AI</div>
+
+            <div class="ecosima-ai-bubble">
+              Загрузите шаблон Экосима и фото «до/после».
+              Например: «Сделай по этому шаблону картинку
+              про маркировку зоны химии».
+            </div>
+          </div>
+        </div>
+
+        <div class="ecosima-ai-attachments-grid">
+          <label
+            class="ecosima-ai-attachment-card"
+            for="ecosimaAiTemplateInput"
+          >
+            <input
+              id="ecosimaAiTemplateInput"
+              type="file"
+              accept="image/*"
+            />
+
+            <span class="ecosima-ai-attachment-icon">▧</span>
+
+            <span>
+              <strong>Шаблон</strong>
+              <small>Одна картинка с нужным дизайном</small>
+            </span>
+          </label>
+
+          <label
+            class="ecosima-ai-attachment-card"
+            for="ecosimaAiReferenceInput"
+          >
+            <input
+              id="ecosimaAiReferenceInput"
+              type="file"
+              accept="image/*"
+              multiple
+            />
+
+            <span class="ecosima-ai-attachment-icon">＋</span>
+
+            <span>
+              <strong>Фото для работы</strong>
+              <small>До, после, логотип и другие фото</small>
+            </span>
+          </label>
+        </div>
+
+        <div
+          class="ecosima-ai-attachments"
+          id="ecosimaAiAttachments"
+        ></div>
+
+        <div class="ecosima-ai-settings">
+          <label>
+            <span>Режим</span>
+
+            <select id="ecosimaAiModel">
+              <option value="gemini-3.1-flash-lite-image">
+                Эконом · 1K
+              </option>
+
+              <option value="gemini-3.1-flash-image">
+                Стандарт · лучше шаблоны
+              </option>
+            </select>
+          </label>
+
+          <label>
+            <span>Формат</span>
+
+            <select id="ecosimaAiAspectRatio">
+              <option value="16:9">16:9 · презентация</option>
+              <option value="4:3">4:3 · документ</option>
+              <option value="1:1">1:1 · квадрат</option>
+              <option value="3:2">3:2 · фото</option>
+              <option value="9:16">9:16 · сторис</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Качество</span>
+
+            <select id="ecosimaAiImageSize">
+              <option value="1K">
+                1K · оптимально для сайта
+              </option>
+
+              <option value="2K">
+                2K · повышенное качество
+              </option>
+
+              <option value="4K">
+                4K · максимальное качество
+              </option>
+            </select>
+          </label>
+        </div>
+
+        <div class="ecosima-ai-composer">
+          <textarea
+            id="ecosimaAiPrompt"
+            rows="4"
+            maxlength="4000"
+            placeholder="Например: сделай картинку по этому шаблону про организацию зоны хранения химии. Первое фото — до, второе — после. Текст короткий, на русском языке."
+          ></textarea>
+
+          <div class="ecosima-ai-composer-actions">
+            <span>
+              До 4 изображений. Фото автоматически уменьшаются перед отправкой.
+            </span>
+
+            <button
+              class="ecosima-ai-send-btn"
+              type="button"
+              id="ecosimaAiSendBtn"
+            >
+              ✨ Создать
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="ecosima-status"
+          id="ecosimaAiStatus"
+        ></div>
+      </div>
+
+      <aside class="ecosima-ai-preview-column">
+        <div
+          class="ecosima-ai-preview"
+          id="ecosimaAiPreview"
+        >
+          <div
+            class="ecosima-ai-preview-empty"
+            id="ecosimaAiPreviewEmpty"
+          >
+            <span>✦</span>
+
+            <strong>Здесь появится результат</strong>
+
+            <p>
+              После генерации картинку можно скачать
+              или сохранить в Экосима.
+            </p>
+          </div>
+
+          <img
+            id="ecosimaAiGeneratedImage"
+            alt="Сгенерированная Экосима"
+            hidden
+          />
+        </div>
+
+        <div class="ecosima-ai-save-fields">
+          <label class="ecosima-field">
+            <span>Название файла</span>
+
+            <input
+              id="ecosimaAiSaveTitle"
+              type="text"
+              placeholder="Например: Маркировка зоны химии"
+            />
+          </label>
+
+          <label class="ecosima-field">
+            <span>Раздел</span>
+
+            <select id="ecosimaAiSaveCategory">
+              <option value="Склад">Склад</option>
+              <option value="СП">СП</option>
+              <option value="Химия">Химия</option>
+              <option value="Кухня">Кухня</option>
+              <option value="Прилавок">Прилавок</option>
+              <option value="Другое">Другое</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="ecosima-ai-preview-actions">
+          <button
+            type="button"
+            class="ecosima-ai-secondary-btn"
+            id="ecosimaAiDownloadBtn"
+            disabled
+          >
+            Скачать изображение
+          </button>
+
+          <button
+            type="button"
+            class="ecosima-ai-save-btn"
+            id="ecosimaAiSaveBtn"
+            disabled
+          >
+            Сохранить в Экосима
+          </button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+
   <div class="ecosima-upload-card">
     <div class="ecosima-form-grid">
       <label class="ecosima-field">
